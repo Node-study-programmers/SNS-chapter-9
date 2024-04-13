@@ -7,10 +7,14 @@ import session from 'express-session';
 import RouteError from './errors/routeError.js';
 import pageRouter from './routers/pageRouter.js';
 import conn from './sequelize/models/index.js';
+import authRouter from './routers/authRouter.js';
+import passportConfig from './passport/index.js';
+import passport from 'passport';
 
 dotenv.config();
 
 const app = express();
+passportConfig();
 const port = 5000;
 
 app.set('view engine', 'html');
@@ -32,11 +36,15 @@ app.use(
     cookie: { httpOnly: true, secure: false },
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/favicon.ico', (req, res) => {
   res.sendStatus(200);
 });
 app.use('/', pageRouter);
+app.use('/auth', authRouter);
+
 app.use(RouteError.notFoundHandler);
 app.use(RouteError.renderError);
 
