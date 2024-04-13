@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import RouteError from './errors/routeError.js';
 import pageRouter from './routers/pageRouter.js';
+import conn from './sequelize/models/index.js';
+
 dotenv.config();
 
 const app = express();
@@ -38,6 +40,7 @@ app.use('/', pageRouter);
 app.use(RouteError.notFoundHandler);
 app.use(RouteError.renderError);
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await conn;
   console.log(`open Server port ${port}`);
 });
