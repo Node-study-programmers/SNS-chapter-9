@@ -19,6 +19,18 @@ class PageController {
     const twits: unknown[] = [];
 
     res.render('main', { title: 'NodeBird', twits });
+    /** console.log(req.session); 
+  Session {
+    cookie: {
+    path: '/',
+    _expires: null,
+    originalMaxAge: null,
+    httpOnly: true,
+    secure: false
+  },
+  passport: { user: 2 } => 로그 아웃시에는 passport 객체 삭제
+} 
+*/
   }
 }
 

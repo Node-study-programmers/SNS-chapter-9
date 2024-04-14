@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy } from 'passport-kakao';
 import User from '../sequelize/models/User.js';
 
-export default () => {
+const kakao = () => {
   passport.use(
     new Strategy(
       {
@@ -31,3 +31,5 @@ export default () => {
     )
   );
 };
+
+export default kakao;
