@@ -9,6 +9,9 @@ const dotenv = require('dotenv'); // .env 파일 사용
 dotenv.config(); // .env파일을 이 파일에서 사용하겠다 !
 // page 라우터 호출
 const pageRouter = require('./routes/page');
+// ./models/index.js 생략
+// DB로그인, 테이블 생성, 관계 등이 이루어짐
+const { sequelize } = require('./models');
 
 // express 프레임워크를 사용하겠다 app이란 변수로
 const app = express();
@@ -28,6 +31,20 @@ nunjucks.configure('views', {
     express: app, // express 애플리케이션을 지정, 이를통해 Nunjucks는 Express와 함께 사용될 것임을 알게 됨
     watch: true, // Nunjucks가 템플릿 파일을 감시하고 변경 사항을 실시간으로 반영할지 여부 결정
 })
+
+// sync() 메서드를 호출하여 데이터베이스와 모델 간의 동기화를 수행
+// force: false 옵션을 전달하여 기존의 테이블을 변경하지 않고 새로운 테이블을 생성
+// force: true 일시 기존의 테이블을 삭제하고 새로운 테이블을 생성
+// require('./models/index.js') 호출할 때 테이블이 생성되는줄 알았는데
+// sync()함수가 실행될 때 테이블이 생성됨
+// sequelize 객체 자체만으론 아직 데이터를 담아두기만하고 DB를 생성하지 않은 단계
+sequelize.sync({ force: false })
+    .then(() => {
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 
 // app.use() express애플리케이션에 미들웨어를 추가
 app.use(morgan('dev')); // 'dev'는 Morgan의 로깅 형식 중 하나 (디버깅)
@@ -60,7 +77,7 @@ app.use(express.urlencoded({ extended: false}));
 // 전송된 쿠키를 파싱하여 요청 객체의 req.cookies 속성에 저장
 // cookieParaser(secret) 'secret' : 쿠키를 서명하는데 사용되는 비밀 키
 // 이를 통해 쿠키가 변조되었는지 여부를 확인
-app.use(cookieParaser(process.env.COOKIE_SECRET));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // 세션 관리를 위한 미들웨어 추가, 세션을 관리하고 클라이언트의 세션 상태를 유지
 app.use(session({
