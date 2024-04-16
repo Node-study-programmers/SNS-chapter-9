@@ -10,6 +10,7 @@ import conn from './sequelize/models/index.js';
 import authRouter from './routers/authRouter.js';
 import passportConfig from './passport/index.js';
 import passport from 'passport';
+import postRouter from './routers/postRouter.js';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.get('/favicon.ico', (req, res) => {
 });
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
 
 app.use(RouteError.notFoundHandler);
 app.use(RouteError.renderError);

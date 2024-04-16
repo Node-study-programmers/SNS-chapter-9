@@ -7,6 +7,7 @@
         <textarea id="twit" name="content" maxlength="140"></textarea>
       </div>
       <div class="img-preview">
+        <div id="img-err" style="display: none">이미지 파일이 아니거나 용량이 너무 큽니다</div>
         <img id="img-preview" src="" style="display: none" width="250" alt="미리보기" />
         <input id="img-url" type="hidden" name="url" />
       </div>
@@ -54,6 +55,7 @@
           document.getElementById('img-preview').style.display = 'inline';
         })
         .catch(err => {
+          document.getElementById('img-err').style.display = 'inline';
           console.error(err);
         });
     });
