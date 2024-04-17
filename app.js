@@ -5,16 +5,23 @@ const path = require('path'); // 경로 작업 수행 ? 사용해야되나
 const session = require('express-session'); // 세션 모듈 사용 -쿠키와..
 const nunjucks = require('nunjucks'); // html에 사용
 const dotenv = require('dotenv'); // .env 파일 사용
+const passport = require('passport');
 
 dotenv.config(); // .env파일을 이 파일에서 사용하겠다 !
 // page 라우터 호출
 const pageRouter = require('./routes/page');
+const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
+
 // ./models/index.js 생략
 // DB로그인, 테이블 생성, 관계 등이 이루어짐
-const { sequelize } = require('./models');
+const { sequelize } = require('./models/index');
+const passportConfig = require('./passport/index');
 
 // express 프레임워크를 사용하겠다 app이란 변수로
 const app = express();
+passportConfig(); // passport 모듈을 사용하겠다 !
 
 // app.set() == express 애플리케이션 설정
 // express 애플리케이션의 포트를 .env폴더의 PORT로 하겠다 / default는 8001
@@ -56,6 +63,8 @@ app.use(morgan('dev')); // 'dev'는 Morgan의 로깅 형식 중 하나 (디버�
 app.use(express.static(path.join(__dirname, 'public')));
 // == app.use('/', express.static('public'));
 
+app.use('/img', express.static(path.join(__dirname, 'uploads')));
+
 // JSON 형식의 요청 바디를 파싱하는 미들웨어를 추가하는 역할
 // 클라이언트로부터 전송된 JSON형식의 데이터를 파싱하여 JavaScript 객체로 변환
 app.use(express.json());
@@ -90,9 +99,16 @@ app.use(session({
     }
 }));
 
+app.use(passport.initialize()); // 요청(req 객체)에 passport를 심음
+app.use(passport.session()); // req.session 객체에 passport 정보 저장
+// req.session 객체는 express-session에서 생성하는 것이므로, passport 미들웨어는 express-session 보다 뒤에 연결
+
 // 라우팅을 처리하기 위해 라우터를 추가하는 역할
 // 모든 경로('/')에 대한 요청을 'pageRouter'라는 라우터에 전달
 app.use('/', pageRouter);
+app.use('/auth', authRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 // 404 오류를 처리하기 위한 미들웨어 추가
 app.use((req, res, next) => {
