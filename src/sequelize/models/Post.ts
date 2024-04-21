@@ -1,11 +1,25 @@
-import Sequelize from 'sequelize';
+import Sequelize, {
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  BelongsToManyAddAssociationsMixin,
+} from 'sequelize';
 import User from './User.js';
 import Hashtag from './HashTag.js';
 
-class Post extends Sequelize.Model {
+class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
+  declare content: string;
+  declare img: string;
+  declare id: CreationOptional<number>;
+  declare UserId: number;
+  declare addHashtags: BelongsToManyAddAssociationsMixin<Hashtag, number>;
+
   static initiate(sequelize: Sequelize.Sequelize) {
     Post.init(
       {
+        id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+        UserId: { type: Sequelize.INTEGER },
         content: { type: Sequelize.STRING(140), allowNull: false },
         img: {
           type: Sequelize.STRING(200),

@@ -1,7 +1,9 @@
-import Sequelize from 'sequelize';
+import Sequelize, { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
 import Post from './Post.js';
 
-class Hashtag extends Sequelize.Model {
+class Hashtag extends Model<InferAttributes<Hashtag>, InferCreationAttributes<Hashtag>> {
+  declare title: string;
+
   static initiate(sequelize: Sequelize.Sequelize) {
     Hashtag.init(
       {

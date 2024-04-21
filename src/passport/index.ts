@@ -21,6 +21,8 @@ export default () => {
    */
   passport.deserializeUser((id, done) => {
     console.log('모든 요청 : deserializeUser 콜백 함수 들어옴');
+    if (!id) return;
+
     User.findOne({ where: { id } }) //id는 세션에서 가져옴
       .then(user => {
         done(null, user); //req.user 필드에 유저 정보 저장

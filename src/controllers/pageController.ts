@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import Post from '../sequelize/models/Post.js';
+import User from '../sequelize/models/User.js';
 
 class PageController {
   static startPoint(req: Request, res: Response, next: NextFunction) {
@@ -15,10 +17,14 @@ class PageController {
   static renderJoin(req: Request, res: Response) {
     res.render('join', { title: '회원 가입 - NodeBird' });
   }
-  static renderMain(req: Request, res: Response) {
-    const twits: unknown[] = [];
+  static async renderMain(req: Request, res: Response, next: NextFunction) {
+    await Post.findAll({
+      include: { model: User, attributes: ['id', 'nick'] },
+      order: [['createdAt', 'DESC']],
+    })
+      .then(posts => res.render('main', { title: 'NodeBird', twits: posts }))
+      .catch(e => next(e));
 
-    res.render('main', { title: 'NodeBird', twits });
     /** console.log(req.session); 
   Session {
     cookie: {

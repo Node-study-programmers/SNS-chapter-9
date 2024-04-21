@@ -39,10 +39,8 @@ try {
   fs.mkdirSync('public/upload-imgs');
 }
 
-postRouter.post('/img', authValidator.isLoggedIn, uploda.single('img'), PostController.upload);
+postRouter.post('/img', authValidator.isLoggedIn, uploda.single('img'), PostController.uploadImg);
 
 const upload2 = multer();
-postRouter.post('/', authValidator.isLoggedIn, upload2.none(), (req, res, next) => {
-  console.log(req.body);
-});
+postRouter.post('/', authValidator.isLoggedIn, upload2.none(), PostController.uploadPost);
 export default postRouter;
