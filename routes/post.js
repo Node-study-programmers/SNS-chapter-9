@@ -27,9 +27,11 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// POST /post/img
+// 이미지 업로드 담당
+// POST /post/img 
 router.post('/img', isLoggedIn, upload.single('img'), afterUploadImage);
 
+// 게시물 업로드 담당
 // POST /post
 const upload2 = multer();
 router.post('/', isLoggedIn, upload2.none(), uploadPost);

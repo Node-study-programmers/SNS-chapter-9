@@ -1,11 +1,11 @@
 const express = require('express'); // express 모듈
 const cookieParser = require('cookie-parser'); // 쿠키 모듈 사용
 const morgan = require('morgan'); // 디버깅에 사용되는 모듈
-const path = require('path'); // 경로 작업 수행 ? 사용해야되나
+const path = require('path'); // 경로 작업 수행
 const session = require('express-session'); // 세션 모듈 사용 -쿠키와..
 const nunjucks = require('nunjucks'); // html에 사용
 const dotenv = require('dotenv'); // .env 파일 사용
-const passport = require('passport');
+const passport = require('passport'); // 인증 모듈 사용
 
 dotenv.config(); // .env파일을 이 파일에서 사용하겠다 !
 // page 라우터 호출
@@ -14,7 +14,6 @@ const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 
-// ./models/index.js 생략
 // DB로그인, 테이블 생성, 관계 등이 이루어짐
 const { sequelize } = require('./models/index');
 const passportConfig = require('./passport/index');
@@ -45,7 +44,7 @@ nunjucks.configure('views', {
 // require('./models/index.js') 호출할 때 테이블이 생성되는줄 알았는데
 // sync()함수가 실행될 때 테이블이 생성됨
 // sequelize 객체 자체만으론 아직 데이터를 담아두기만하고 DB를 생성하지 않은 단계
-sequelize.sync({ force: false })
+sequelize.sync({ force: true })
     .then(() => {
         console.log('데이터베이스 연결 성공');
     })
